@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blockchain Warranty Tracker</title>
+  <meta name="description" content="Register and track product warranties on the blockchain using Ethereum smart contracts." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Ethers.js v6 CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated Background Blobs -->
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Header -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </span>
+        <h1>Warranty Tracker</h1>
+      </div>
+      <button id="btn-connect" class="btn btn-glow">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="6" width="20" height="12" rx="2"/>
+          <path d="M22 10H18a2 2 0 000 4h4"/>
+        </svg>
+        Connect Wallet
+      </button>
+    </div>
+    <p id="wallet-status" class="wallet-status hidden"></p>
+  </header>
+
+  <!-- Main -->
+  <main>
+    <!-- Network Info Bar -->
+    <div id="network-bar" class="network-bar hidden">
+      <span class="pulse-dot"></span>
+      <span id="network-name"></span>
+    </div>
+
+    <!-- Register Product Card -->
+    <section class="card glass" id="section-register">
+      <div class="card-header">
+        <span class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </span>
+        <h2>Register Product</h2>
+      </div>
+      <form id="form-register" autocomplete="off">
+        <div class="input-group">
+          <label for="input-product-id">Product ID</label>
+          <input type="text" id="input-product-id" placeholder="e.g. SN-20260406-001" required />
+        </div>
+        <div class="input-group">
+          <label for="input-product-name">Product Name</label>
+          <input type="text" id="input-product-name" placeholder="e.g. Samsung Galaxy S26" required />
+        </div>
+        <div class="input-group">
+          <label for="input-warranty-days">Warranty Duration (days)</label>
+          <input type="number" id="input-warranty-days" placeholder="e.g. 365" min="1" required />
+        </div>
+        <button type="submit" id="btn-register" class="btn btn-primary btn-full">
+          Register on Blockchain
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </form>
+      <!-- Transaction Result -->
+      <div id="register-result" class="result hidden"></div>
+    </section>
+
+    <!-- Lookup Product Card -->
+    <section class="card glass" id="section-lookup">
+      <div class="card-header">
+        <span class="card-icon icon-alt">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+        </span>
+        <h2>Lookup Product</h2>
+      </div>
+      <form id="form-lookup" autocomplete="off">
+        <div class="input-group">
+          <label for="input-lookup-id">Product ID</label>
+          <input type="text" id="input-lookup-id" placeholder="Enter Product ID to search" required />
+        </div>
+        <button type="submit" id="btn-lookup" class="btn btn-secondary btn-full">
+          Fetch Details
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </form>
+      <!-- Product Details -->
+      <div id="lookup-result" class="result hidden"></div>
+    </section>
+
+    <!-- Stats -->
+    <section class="card glass stats-card" id="section-stats">
+      <div class="card-header">
+        <span class="card-icon icon-stats">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 20V10M12 20V4M6 20v-6"/>
+          </svg>
+        </span>
+        <h2>On-Chain Stats</h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat">
+          <span class="stat-value" id="stat-total">&mdash;</span>
+          <span class="stat-label">Products Registered</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-network">&mdash;</span>
+          <span class="stat-label">Network</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-block">&mdash;</span>
+          <span class="stat-label">Latest Block</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="spinner"></div>
+    <p id="loading-text">Processing transaction...</p>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
