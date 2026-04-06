@@ -4,7 +4,7 @@
 
 // ─── Contract Details ───
 // UPDATE THIS after deploying the contract!
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const CONTRACT_ADDRESS = "0x448B7cB88CE4734142EBE369e12D9D32B917Ef1B";
 
 const CONTRACT_ABI = [
   "function registerProduct(string memory _productId, string memory _productName, uint256 _warrantyPeriod) external",
