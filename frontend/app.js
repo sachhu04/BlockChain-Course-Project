@@ -4,7 +4,7 @@
 
 // ─── Contract Details ───
 // UPDATE THIS after deploying the contract!
-const CONTRACT_ADDRESS = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 const CONTRACT_ABI = [
   "function registerProduct(string memory _productId, string memory _productName, uint256 _warrantyPeriod) external",
@@ -207,6 +207,10 @@ formRegister.addEventListener("submit", async (e) => {
     // Parse revert reason
     if (errorMsg.includes("Product already registered")) {
       errorMsg = "This Product ID is already registered on the blockchain.";
+    } else if (errorMsg.includes("too many errors") || errorMsg.includes("RPC endpoint")) {
+      errorMsg = "Network congestion: MetaMask's RPC endpoint is temporarily overwhelmed. Please wait a few seconds and try again.";
+    } else if (err.code === "ACTION_REJECTED" || errorMsg.includes("rejected")) {
+      errorMsg = "Transaction was cancelled in your wallet.";
     }
 
     registerResult.className = "result error";
@@ -289,6 +293,8 @@ formLookup.addEventListener("submit", async (e) => {
     let errorMsg = err.reason || err.message || "Lookup failed";
     if (errorMsg.includes("Product not found")) {
       errorMsg = "No product found with this ID.";
+    } else if (errorMsg.includes("too many errors") || errorMsg.includes("RPC endpoint")) {
+      errorMsg = "Network congestion: MetaMask's RPC endpoint is temporarily overwhelmed. Please wait a few seconds and try again.";
     }
 
     lookupResult.className = "result error";

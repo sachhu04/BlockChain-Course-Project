@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "compile": "npx hardhat compile",
-    "node": "npx hardhat node",
+    "node": "npx hardhat node --hostname 0.0.0.0",
     "deploy": "npx hardhat run scripts/deploy.js --network localhost",
-    "frontend": "npx http-server frontend -p 3000 -o",
+    "frontend": "npx http-server frontend -p 3000 -c-1 -o",
     "test": "npx hardhat test"
   },
   "keywords": [],
